@@ -1,4 +1,4 @@
-service: serverless-publicadores
+service: serverless-lambda-authorizer-jwt
 
 frameworkVersion: '2 || 3'
 
