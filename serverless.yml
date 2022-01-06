@@ -29,6 +29,14 @@ functions:
           path: /users
           method: POST
           cors: true
+          authorizer: authorizerFunc
+  authenticateUser:
+    handler: handler.authenticateUser
+    events:
+      - http:
+          path: /login
+          method: POST
+          cors: true
   getUser:
     handler: handler.getUser
     events:
@@ -36,10 +44,13 @@ functions:
           path: /users/{id}
           method: GET
           cors: true
+          authorizer: authorizerFunc
           request:
             parameters:
               paths:
                 id: true
+  authorizerFunc:
+    handler: authorizer.handler
 
 resources:
   Resources:
