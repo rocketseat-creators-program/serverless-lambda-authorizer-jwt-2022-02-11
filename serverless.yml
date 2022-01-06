@@ -1,0 +1,56 @@
+service: serverless-publicadores
+
+frameworkVersion: '2 || 3'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  memorySize: 128
+  stage: dev
+  region: us-east-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - 'Fn::GetAtt': [ UsersDynamoDBTable, Arn ]
+
+functions:
+  createUser:
+    handler: handler.createUser
+    events:
+      - http:
+          path: /users
+          method: POST
+          cors: true
+  getUser:
+    handler: handler.getUser
+    events:
+      - http:
+          path: /users/{id}
+          method: GET
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+
+resources:
+  Resources:
+    UsersDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: users
