@@ -24,13 +24,12 @@ const createUser = async event => {
     const user = JSON.parse(event.body)
     const id = uuidv4()
 
-    const { name, email, access, password } = user
+    const { name, email, password } = user
 
     const newUser = {
       id,
       name,
       email,
-      access,
       password: bcrypt.hashSync(password, 10),
     }
 
@@ -88,7 +87,7 @@ const getUser = async event => {
 
 const authenticateUser = async event => {
   try {
-    const { email, password } = event.body
+    const { email, password } = JSON.parse(event.body)
 
     const params = {
       TableName: USERS_TABLE,
@@ -129,7 +128,6 @@ const authenticateUser = async event => {
       id: Item.id,
       name: Item.name,
       email: Item.email,
-      access: Item.access,
     }
 
     let token = jwt.sign(tokenUser, JWT_SECRET, { expiresIn: '24h' })
