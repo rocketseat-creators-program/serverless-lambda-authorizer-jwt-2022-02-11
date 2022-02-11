@@ -88,7 +88,7 @@ const getUser = async event => {
 
 const authenticateUser = async event => {
   try {
-    const { email, password } = JSON.parse(event.body)
+    const { email, password } = event.body
 
     const params = {
       TableName: USERS_TABLE,
@@ -101,18 +101,7 @@ const authenticateUser = async event => {
       FilterExpression: '#e = :email',
     }
 
-    const response = await dynamoDb.query(params).promise()
-
-    const defaultResponse = {
-      statusCode: 404,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-      },
-      body: JSON.stringify({
-        message: 'Usuário/Senha inválido',
-      }),
-    }
+    const response = await dynamoDb.scan(params).promise()
 
     if (!response || !response.Items.length) {
       return {
@@ -126,7 +115,7 @@ const authenticateUser = async event => {
 
     const Item = response.Items[0]
 
-    if (!bcrypt.compareSync(password, response.Items[0].password)) {
+    if (!bcrypt.compareSync(password, Item.password)) {
       return {
         ...defaultResponse,
         statusCode: 404,
