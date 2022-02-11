@@ -1,5 +1,5 @@
 {
-  "name": "serverless-publicadores",
+  "name": "serverless-lambda-authorizer-jwt",
   "version": "0.0.1",
   "description": "Serverless REST API using serverless",
   "main": "handlers.js",
